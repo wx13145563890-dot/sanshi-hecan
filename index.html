@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三式合参 · 梅花 奇门 六壬</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">三式</div>
+    <div class="brand-text">
+      <h1>三式合参</h1>
+      <p>梅花易数 · 奇门遁甲 · 大六壬</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="sanshi">三式合参</button>
+    <button class="tab" data-tab="liuyao">六爻 · 手摇起卦</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ==================== 三式合参 ==================== -->
+  <section id="tab-sanshi" class="tab-panel active">
+    <div class="hero">
+      <div class="hero-badge">一次起盘 · 三盘同屏 · AI 合参</div>
+      <h2>填写一次时间，同屏生成三式盘，AI 三式合参解读</h2>
+      <p>梅花易数观其象，奇门遁甲观其局，大六壬观其课传。三式同参，相互印证，方得全貌。</p>
+      <button class="btn primary big" id="heroCast">立即起盘</button>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">起盘信息</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label>历法</label>
+          <div class="seg">
+            <button class="seg-btn active" data-cal="solar">公历</button>
+            <button class="seg-btn" data-cal="lunar">农历</button>
+          </div>
+        </div>
+        <div class="field" id="solarDateField">
+          <label>起盘日期</label>
+          <input type="date" id="birthDate" value="1990-05-12">
+        </div>
+        <div class="field hidden" id="lunarDateField">
+          <label>农历日期</label>
+          <div class="row3">
+            <input type="number" id="lunarYear" min="1900" max="2100" value="1990">
+            <label class="check inline"><input type="checkbox" id="lunarRun">闰</label>
+            <select id="lunarMonth"></select>
+            <input type="number" id="lunarDay" min="1" max="30" value="4">
+          </div>
+        </div>
+        <div class="field">
+          <label>起盘时间</label>
+          <input type="time" id="birthTime" value="14:30">
+        </div>
+        <div class="field">
+          <label>真太阳时</label>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="trueSolar"> 按所选地点修正</label>
+            <span class="hint">仅按经度修正时差，未计均时差</span>
+          </div>
+          <div class="loc-cascade">
+            <select id="locProv"></select>
+            <select id="locCity"></select>
+            <select id="locCounty"></select>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="castBtn">立即起盘</button>
+        <span class="note">排盘口径：北京时间 · 子初换日 · 时家奇门（拆补法）</span>
+      </div>
+    </div>
+
+    <div id="results" class="hidden">
+      <div class="info-strip" id="infoStrip"></div>
+      <div class="panels">
+        <div class="panel" id="panelMeihua"></div>
+        <div class="panel" id="panelQimen"></div>
+        <div class="panel" id="panelDaliuren"></div>
+      </div>
+    </div>
+
+    <div class="card ai-card">
+      <h3 class="card-title">AI 合参解读 <span class="sub">接口由你自行配置</span></h3>
+      <details class="config" id="configDetails">
+        <summary>⚙ AI 接口配置（OpenAI 兼容）</summary>
+        <div class="form-grid">
+          <div class="field">
+            <label>接口地址 Base URL</label>
+            <input type="text" id="aiBase" placeholder="https://api.openai.com/v1">
+          </div>
+          <div class="field">
+            <label>API Key</label>
+            <input type="password" id="aiKey" placeholder="sk-...">
+          </div>
+          <div class="field">
+            <label>模型</label>
+            <input type="text" id="aiModel" placeholder="gpt-4o / deepseek-chat / qwen-plus ...">
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <div class="row">
+              <button class="btn" id="saveConfig">保存配置</button>
+              <button class="btn ghost" id="testConfig">测试连接</button>
+              <span class="status" id="configStatus"></span>
+            </div>
+          </div>
+        </div>
+      </details>
+      <div class="ai-actions">
+        <div class="field inline-field">
+          <label>解读侧重</label>
+          <select id="aiShiLei">
+            <option value="">综合合参</option>
+            <option value="感情">感情</option>
+            <option value="事业">事业</option>
+            <option value="财运">财运</option>
+            <option value="健康">健康</option>
+          </select>
+        </div>
+        <button class="btn primary" id="aiHecan">AI 三盘合参解读</button>
+        <span class="note">将三盘结构化数据一并提供，生成综合解读</span>
+      </div>
+      <div class="chat">
+        <div class="chat-body" id="hecanBody"></div>
+        <div class="chat-input">
+          <textarea id="hecanInput" rows="2" placeholder="针对三式合参自由追问，如：今年事业上该注意什么？"></textarea>
+          <button class="btn" id="hecanSend">提问</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 六爻手摇起卦 ==================== -->
+  <section id="tab-liuyao" class="tab-panel">
+    <div class="hero small">
+      <div class="hero-badge">独立入口 · 手摇起卦</div>
+      <h2>六爻 · 手摇起卦</h2>
+      <p>独立于三式合参。手摇六次铜钱得六爻，自动装卦：本卦、变卦、六亲、六神、世应，AI 解读。</p>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">手摇起卦</h3>
+      <div class="coin-area">
+        <div class="coins" id="coins">
+          <div class="coin" data-i="0"><span class="coin-face">字</span></div>
+          <div class="coin" data-i="1"><span class="coin-face">字</span></div>
+          <div class="coin" data-i="2"><span class="coin-face">字</span></div>
+        </div>
+        <div class="toss-actions">
+          <button class="btn primary" id="tossBtn">摇一摇</button>
+          <button class="btn" id="tossAuto">连摇六次</button>
+          <button class="btn ghost" id="tossReset">重新摇</button>
+        </div>
+        <div class="progress" id="tossProgress"></div>
+        <p class="hint center">三枚铜钱，正面为「字」。三字老阳、两字少阴、一字少阳、三背老阴，自下而上成卦。</p>
+      </div>
+    </div>
+
+    <div id="liuyaoResult" class="hidden">
+      <div class="info-strip" id="lyInfoStrip"></div>
+      <div class="panel full" id="lyPanel"></div>
+    </div>
+
+    <div class="card ai-card">
+      <h3 class="card-title">六爻 AI 解读</h3>
+      <div class="ai-actions">
+        <button class="btn primary" id="lyAiRead">AI 解读本卦</button>
+        <span class="note">使用与上方相同的 AI 接口配置</span>
+      </div>
+      <div class="chat">
+        <div class="chat-body" id="lyBody"></div>
+        <div class="chat-input">
+          <textarea id="lyInput" rows="2" placeholder="针对六爻卦象追问，如：这卦问求职如何？"></textarea>
+          <button class="btn" id="lySend">提问</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>三式合参 · 传统术数文化研究工具，仅供个人参考，不构成任何决策建议 · 排盘引擎基于开源 mingpan（Apache-2.0）</footer>
+
+<script src="engine.js"></script>
+<script src="locations.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
